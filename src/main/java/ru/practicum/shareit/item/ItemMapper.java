@@ -24,5 +24,17 @@ public class ItemMapper {
                 .request(itemDto.getRequest())
                 .build();
     }
+
+    public static Item toItemUpdate(ItemDto itemDto, Item item) {
+        return Item.builder()
+                .id(itemDto.getId() != null ? itemDto.getId() : item.getId())
+                .name(itemDto.getName() != null && !itemDto.getName().isBlank() ? itemDto.getName() : item.getName())
+                .description(itemDto.getDescription() != null && !itemDto.getDescription().isBlank() ?
+                        itemDto.getDescription() : item.getDescription())
+                .available(itemDto.getAvailable() != null ? itemDto.getAvailable() : item.getAvailable())
+                .owner(item.getOwner())
+                .request(itemDto.getRequest())
+                .build();
+    }
 }
 

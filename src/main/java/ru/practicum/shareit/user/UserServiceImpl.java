@@ -38,11 +38,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto, Integer id) {
-        if (userRepository.getUserById(id) == null) {
+        User user = userRepository.getUserById(id);
+
+        if (user == null) {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
-
-        User user = userRepository.getUserById(id);
 
         if (userDto.getEmail() != null) {
             if (!userDto.getEmail().equals(user.getEmail())) {

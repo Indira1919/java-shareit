@@ -62,7 +62,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, Integer id, Integer userId) {
-        if (itemRepository.getItemById(id) == null) {
+        Item item = itemRepository.getItemById(id);
+
+        if (item == null) {
             throw new ObjectNotFoundException("Вещь не найдена");
         }
 
@@ -70,23 +72,13 @@ public class ItemServiceImpl implements ItemService {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
 
-        Item item = itemRepository.getItemById(id);
-
         if (!item.getOwner().getId().equals(userId)) {
             throw new ObjectNotFoundException("Невозможно обновить данные");
         }
 
-        if (itemDto.getName() != null && !itemDto.getName().isBlank()) {
-            item.setName(itemDto.getName());
-        }
-        if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank()) {
-            item.setDescription(itemDto.getDescription());
-        }
-        if (itemDto.getAvailable() != null) {
-            item.setAvailable(itemDto.getAvailable());
-        }
+        item = itemRepository.updateItem(ItemMapper.toItemUpdate(itemDto, item));
 
-        return ItemMapper.toItemDto(itemRepository.updateItem(item));
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
