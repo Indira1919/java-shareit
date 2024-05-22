@@ -27,12 +27,12 @@ public class Comment {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    @JoinColumn(name = "id_item", referencedColumnName = "id")
     private Item item;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @JoinColumn(name = "id_author", referencedColumnName = "id")
     private User author;
 
     private LocalDateTime created;

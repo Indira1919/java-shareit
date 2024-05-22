@@ -30,6 +30,7 @@ public class Item {
     private String description;
 
     @NotNull(groups = {Add.class})
+    @Column(name = "is_available")
     private Boolean available;
 
     @ManyToOne
@@ -37,7 +38,7 @@ public class Item {
     private User owner;
 
     @ManyToOne
-    @JoinColumn(name = "request_id", referencedColumnName = "id")
+    @JoinColumn(name = "id_request", referencedColumnName = "id")
     private ItemRequest request;
 }
 
