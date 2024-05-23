@@ -23,12 +23,14 @@ public class BookingDto {
     private Status status;
 
     @Data
+    @Builder
     public static class Booker {
         private final Integer id;
         private final String name;
     }
 
     @Data
+    @Builder
     public static class Item {
         private final Integer id;
         private final String name;

@@ -55,28 +55,31 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> booking;
         State stateOfBooking = State.valueOf(state);
 
-        if (stateOfBooking == State.ALL) {
-            booking = bookingRepository.findAllByBooker(user, sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList()); // из booking в BookingDto
-        } else if (stateOfBooking == State.CURRENT) {
-            booking = bookingRepository.findAllByBookerAndStartBeforeAndEndAfter(user, LocalDateTime.now(),
-                    LocalDateTime.now(), sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else if (stateOfBooking == State.PAST) {
-            booking = bookingRepository.findAllByBookerAndEndBefore(user, LocalDateTime.now(), sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else if (stateOfBooking == State.FUTURE) {
-            booking = bookingRepository.findAllByBookerAndStartAfter(user, LocalDateTime.now(), sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else if (stateOfBooking == State.WAITING) {
-            booking = bookingRepository.findAllByBookerAndStatusEquals(user, Status.WAITING, sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else if (stateOfBooking == State.REJECTED) {
-            booking = bookingRepository.findAllByBookerAndStatusEquals(user, Status.REJECTED, sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else {
-            throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+        switch (stateOfBooking) {
+            case ALL:
+                booking = bookingRepository.findAllByBooker(user, sort);
+                break;
+            case CURRENT:
+                booking = bookingRepository.findAllByBookerAndStartBeforeAndEndAfter(user, LocalDateTime.now(),
+                        LocalDateTime.now(), sort);
+                break;
+            case PAST:
+                booking = bookingRepository.findAllByBookerAndEndBefore(user, LocalDateTime.now(), sort);
+                break;
+            case FUTURE:
+                booking = bookingRepository.findAllByBookerAndStartAfter(user, LocalDateTime.now(), sort);
+                break;
+            case WAITING:
+                booking = bookingRepository.findAllByBookerAndStatusEquals(user, Status.WAITING, sort);
+                break;
+            case REJECTED:
+                booking = bookingRepository.findAllByBookerAndStatusEquals(user, Status.REJECTED, sort);
+                break;
+            default:
+                throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
         }
+
+        return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
     }
 
     @Override
@@ -86,28 +89,31 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> booking;
         State stateOfBooking = State.valueOf(state);
 
-        if (stateOfBooking == State.ALL) {
-            booking = bookingRepository.findAllByItemOwner(user, sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList()); // из booking в BookingDto
-        } else if (stateOfBooking == State.CURRENT) {
-            booking = bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfter(user, LocalDateTime.now(),
-                    LocalDateTime.now(), sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else if (stateOfBooking == State.PAST) {
-            booking = bookingRepository.findAllByItemOwnerAndEndBefore(user, LocalDateTime.now(), sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else if (stateOfBooking == State.FUTURE) {
-            booking = bookingRepository.findAllByItemOwnerAndStartAfter(user, LocalDateTime.now(), sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else if (stateOfBooking == State.WAITING) {
-            booking = bookingRepository.findAllByItemOwnerAndStatusEquals(user, Status.WAITING, sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else if (stateOfBooking == State.REJECTED) {
-            booking = bookingRepository.findAllByItemOwnerAndStatusEquals(user, Status.REJECTED, sort);
-            return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
-        } else {
-            throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+        switch (stateOfBooking) {
+            case ALL:
+                booking = bookingRepository.findAllByItemOwner(user, sort);
+                break;
+            case CURRENT:
+                booking = bookingRepository.findAllByItemOwnerAndStartBeforeAndEndAfter(user, LocalDateTime.now(),
+                        LocalDateTime.now(), sort);
+                break;
+            case PAST:
+                booking = bookingRepository.findAllByItemOwnerAndEndBefore(user, LocalDateTime.now(), sort);
+                break;
+            case FUTURE:
+                booking = bookingRepository.findAllByItemOwnerAndStartAfter(user, LocalDateTime.now(), sort);
+                break;
+            case WAITING:
+                booking = bookingRepository.findAllByItemOwnerAndStatusEquals(user, Status.WAITING, sort);
+                break;
+            case REJECTED:
+                booking = bookingRepository.findAllByItemOwnerAndStatusEquals(user, Status.REJECTED, sort);
+                break;
+            default:
+                throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
         }
+
+        return booking.stream().map(BookingMapper::toBookingDto).collect(Collectors.toList());
     }
 
     @Override

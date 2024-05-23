@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS requests (
     description VARCHAR(1000) NOT NULL,
     id_requestor BIGINT REFERENCES users (id) ON DELETE CASCADE,
     created TIMESTAMP WITHOUT TIME ZONE,
-    CONSTRAINT pk_request PRIMARY KEY (id)
+    CONSTRAINT pk_request PRIMARY KEY (id),
+    FOREIGN KEY (id_requestor) REFERENCES users (id)
     );
 
 CREATE TABLE IF NOT EXISTS items (
@@ -23,7 +24,9 @@ CREATE TABLE IF NOT EXISTS items (
     is_available BOOLEAN,
     id_owner BIGINT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
     id_request BIGINT REFERENCES requests (id) ON DELETE CASCADE,
-    CONSTRAINT pk_item PRIMARY KEY (id)
+    CONSTRAINT pk_item PRIMARY KEY (id),
+    FOREIGN KEY (id_owner) REFERENCES users (id),
+    FOREIGN KEY (id_request) REFERENCES requests (id)
     );
 
 CREATE TABLE IF NOT EXISTS comments (
@@ -32,7 +35,9 @@ CREATE TABLE IF NOT EXISTS comments (
     id_item BIGINT REFERENCES items (id) ON DELETE CASCADE NOT NULL,
     id_author BIGINT REFERENCES users (id) ON DELETE CASCADE  NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE,
-    CONSTRAINT pk_comments PRIMARY KEY (id)
+    CONSTRAINT pk_comments PRIMARY KEY (id),
+    FOREIGN KEY (id_author) REFERENCES users (id),
+    FOREIGN KEY (id_item) REFERENCES items (id)
     );
 
 CREATE TABLE IF NOT EXISTS bookings (
@@ -42,5 +47,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     id_item BIGINT REFERENCES items (id) ON DELETE CASCADE NOT NULL,
     id_booker BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     status VARCHAR(10),
-    CONSTRAINT pk_booking PRIMARY KEY (id)
+    CONSTRAINT pk_booking PRIMARY KEY (id),
+    FOREIGN KEY (id_booker) REFERENCES users (id),
+    FOREIGN KEY (id_item) REFERENCES items (id)
     );
