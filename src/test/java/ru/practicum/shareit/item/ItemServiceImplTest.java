@@ -164,8 +164,8 @@ class ItemServiceImplTest {
     void addItemOwnerNotFound() {
         Integer userId = 999;
 
-        Mockito.when(userRepository.findById(userId)).
-                thenThrow(new ObjectNotFoundException("Пользователь не найден"));
+        Mockito.when(userRepository.findById(userId))
+                        .thenThrow(new ObjectNotFoundException("Пользователь не найден"));
 
         assertThrows(ObjectNotFoundException.class, () -> itemService.addItem(itemDto, userId));
 
