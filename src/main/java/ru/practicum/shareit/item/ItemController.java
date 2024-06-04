@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.dto.ItemDtoComments;
 import ru.practicum.shareit.valid.Add;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -22,8 +24,10 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDtoComments> getItemsOfUser(@RequestHeader("X-Sharer-User-Id") Integer userId) {
-        return itemService.getItemsOfUser(userId);
+    public List<ItemDtoComments> getItemsOfUser(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                                @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                                @RequestParam(defaultValue = "30") @Min(1) @Max(100) Integer size) {
+        return itemService.getItemsOfUser(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
@@ -33,8 +37,10 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getItems(@RequestParam(value = "text", required = false) String text) {
-        return itemService.getItems(text);
+    public List<ItemDto> getItems(@RequestParam(value = "text", required = false) String text,
+                                  @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                  @RequestParam(defaultValue = "30") @Min(1) @Max(100) Integer size) {
+        return itemService.getItems(text, from, size);
     }
 
     @PatchMapping("/{itemId}")
