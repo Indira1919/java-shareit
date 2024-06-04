@@ -29,10 +29,11 @@ class UserServiceImplIntegrationTest {
 
     @Test
     void getAll() {
-        List<UserDto> actualDtoList = userService.findAll(0,10);
+        List<UserDto> actualDtoList = userService.findAll(0, 10);
 
         assertEquals(1, actualDtoList.size());
     }
+
     @Test
     void getUserById() {
         UserDto userDto = userService.getUserById(userId);
@@ -65,7 +66,7 @@ class UserServiceImplIntegrationTest {
     @Test
     void delete() {
         userService.deleteUser(userId);
-        List<UserDto> usersDto = userService.findAll(0,10);
+        List<UserDto> usersDto = userService.findAll(0, 10);
 
         assertEquals(List.of(), usersDto);
     }

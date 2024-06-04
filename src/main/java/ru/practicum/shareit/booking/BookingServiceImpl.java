@@ -56,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> booking;
         State stateOfBooking = State.valueOf(state);
 
-        if(from < 0) {
+        if (from < 0) {
             throw new BadRequestException("Страница не может быть отрицательной");
         }
 

@@ -145,7 +145,7 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = ItemMapper.toItem(itemDto);
 
-        if(itemDto.getRequestId() != null) {
+        if (itemDto.getRequestId() != null) {
             ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
                     .orElseThrow(() -> new ObjectNotFoundException("Запрос не найден"));
 

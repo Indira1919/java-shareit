@@ -95,7 +95,7 @@ class ItemServiceImplIntegrationTest {
     @Test
     void deleteItem() {
         itemService.deleteItem(itemId);
-        List<ItemDtoComments> itemDtoComments = itemService.getItemsOfUser(userId,0,10);
+        List<ItemDtoComments> itemDtoComments = itemService.getItemsOfUser(userId, 0, 10);
 
         assertEquals(List.of(), itemDtoComments);
     }

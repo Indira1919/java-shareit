@@ -2,7 +2,6 @@ package ru.practicum.shareit.request;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +63,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден"));
 
         List<ItemRequestDto> itemRequestsDto = itemRequestRepository.findAllByRequestorNot(user,
-                PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, "created")))
+                        PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, "created")))
                 .stream()
                 .map(ItemRequestMapper::toItemRequestDto)
                 .collect(Collectors.toList());

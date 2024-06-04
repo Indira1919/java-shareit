@@ -14,5 +14,6 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
                                                                                               String text,
                                                                                               Boolean isAvailable,
                                                                                               Pageable pageable);
+
     List<Item> findAllByRequestId(Integer requestId);
 }
