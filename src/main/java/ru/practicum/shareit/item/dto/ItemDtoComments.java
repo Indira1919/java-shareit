@@ -3,14 +3,14 @@ package ru.practicum.shareit.item.dto;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.valid.Add;
-import ru.practicum.shareit.request.ItemRequest;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @Builder
-public class ItemDto {
+public class ItemDtoComments {
     private Integer id;
     @NotBlank(groups = {Add.class})
     private String name;
@@ -18,7 +18,16 @@ public class ItemDto {
     private String description;
     @NotNull(groups = {Add.class})
     private Boolean available;
-    private ItemRequest request;
 
+    private BookingDto lastBooking;
+
+    private BookingDto nextBooking;
+
+    private List<CommentDto> comments;
+
+    @Data
+    public static class BookingDto {
+        private final Integer id;
+        private final Integer bookerId;
+    }
 }
-
