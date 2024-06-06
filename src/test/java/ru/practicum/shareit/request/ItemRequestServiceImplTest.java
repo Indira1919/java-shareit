@@ -81,7 +81,7 @@ class ItemRequestServiceImplTest {
     }
 
     @Test
-    void getAllByRequester_shouldReturnItemRequestDtoList() {
+    void getAllByRequester() {
         Integer userId = 1;
 
         User user = new User(userId, "test", "test@yandex.ru");

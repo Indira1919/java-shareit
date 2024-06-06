@@ -117,4 +117,22 @@ class ItemRequestControllerTest {
 
         assertEquals(objectMapper.writeValueAsString(itemRequestDto), result);
     }
+
+    @SneakyThrows
+    @Test
+    void addItemRequestError() {
+        Integer userId = null;
+
+        ItemRequestDto itemRequestDto = new ItemRequestDto(1, "description", null, null);
+
+        Mockito.when(itemRequestService.addItemRequest(Mockito.any(), Mockito.anyInt()))
+                .thenReturn(itemRequestDto);
+
+        mockMvc.perform(post("/requests")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(itemRequestDto)))
+                .andExpect(status().is(500));
+
+        Mockito.verify(itemRequestService, Mockito.never()).addItemRequest(itemRequestDto, userId);
+    }
 }
