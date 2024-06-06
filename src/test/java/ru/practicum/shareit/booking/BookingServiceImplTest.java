@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoAdd;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.ItemRepository;
@@ -82,7 +83,6 @@ class BookingServiceImplTest {
         assertThrows(ObjectNotFoundException.class, () -> bookingService.getBookingById(bookingId, userId));
 
     }
-
 
     @Test
     void getAllBookingOfOwnerStateAll() {
@@ -171,11 +171,11 @@ class BookingServiceImplTest {
     @Test
     void getAllBookingOfOwnerStateUnsupportedStatus() {
         Integer userId = 1;
-        String state = "aaaaaa";
+        String state = "UNSUPPORTED_STATUS";
 
         Mockito.when(userRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(user1));
 
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(BadRequestException.class, () ->
                 bookingService.getAllBookingOfOwner(state, userId, 0, 10));
     }
 
@@ -278,12 +278,23 @@ class BookingServiceImplTest {
     @Test
     void getAllBookingOfUserStateUnsupportedStatus() {
         Integer userId = 1;
-        String state = "aaaaa";
+        String state = "UNSUPPORTED_STATUS";
 
         Mockito.when(userRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(user1));
 
-        assertThrows(IllegalArgumentException.class, ()
+        assertThrows(BadRequestException.class, ()
                 -> bookingService.getAllBookingOfUser(state, userId, 0, 10));
+    }
+
+    @Test
+    void getAllBookingOfUserPageNegative() {
+        Integer userId = 1;
+        String state = String.valueOf(State.ALL);
+
+        Mockito.when(userRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(user1));
+
+        assertThrows(BadRequestException.class, ()
+                -> bookingService.getAllBookingOfUser(state, userId, -1, 10));
     }
 
     @Test
@@ -313,5 +324,82 @@ class BookingServiceImplTest {
         assertThat(test).hasFieldOrProperty("id");
     }
 
+    @Test
+    void addBookingRequestAvailableFalse() {
+        item = new Item(1, "ppp", "description", false, user1,
+                null);
+        BookingDtoAdd dto = new BookingDtoAdd(user2.getId(), start, end, item.getId());
 
+        Mockito.when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        Mockito.when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+
+        assertThrows(BadRequestException.class, ()
+                -> bookingService.addBookingRequest(dto, user2.getId()));
+    }
+
+    @Test
+    void addBookingRequestData() {
+        item = new Item(1, "ppp", "description", true, user1,
+                null);
+        BookingDtoAdd dto = new BookingDtoAdd(user2.getId(), LocalDateTime.now().minusDays(5),
+                LocalDateTime.now().minusDays(7), item.getId());
+
+        Mockito.when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        Mockito.when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+
+        assertThrows(BadRequestException.class, ()
+                -> bookingService.addBookingRequest(dto, user2.getId()));
+    }
+
+    @Test
+    void addBookingRequestOwner() {
+        item = new Item(1, "ppp", "description", true, user1,
+                null);
+        BookingDtoAdd dto = new BookingDtoAdd(user1.getId(), start, end, item.getId());
+
+        Mockito.when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        Mockito.when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
+
+        assertThrows(ObjectNotFoundException.class, ()
+                -> bookingService.addBookingRequest(dto, user1.getId()));
+    }
+
+    @Test
+    void getConsentToBooking() {
+        Mockito.when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
+        Mockito.when(bookingRepository.findById(booking.getId())).thenReturn(Optional.of(booking));
+
+        BookingDto bookingDto = bookingService.getConsentToBooking(booking.getId(), user1.getId(), true);
+
+        assertEquals(bookingDto.getStatus(), (Status.APPROVED));
+    }
+
+    @Test
+    void getConsentToBookingStatusRejected() {
+        Mockito.when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
+        Mockito.when(bookingRepository.findById(booking.getId())).thenReturn(Optional.of(booking));
+
+        BookingDto bookingDto = bookingService.getConsentToBooking(booking.getId(), user1.getId(), false);
+
+        assertEquals(bookingDto.getStatus(), (Status.REJECTED));
+    }
+
+    @Test
+    void getConsentToBookingObjectNotFoundException() {
+        Mockito.when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+        Mockito.when(bookingRepository.findById(booking.getId())).thenReturn(Optional.of(booking));
+
+        assertThrows(ObjectNotFoundException.class, ()
+                -> bookingService.getConsentToBooking(booking.getId(), user2.getId(), true));
+    }
+
+    @Test
+    void getConsentToBookingBadRequestException() {
+        booking = new Booking(1, start, end, item, user1, Status.REJECTED);
+        Mockito.when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
+        Mockito.when(bookingRepository.findById(booking.getId())).thenReturn(Optional.of(booking));
+
+        assertThrows(BadRequestException.class, ()
+                -> bookingService.getConsentToBooking(booking.getId(), user1.getId(), true));
+    }
 }

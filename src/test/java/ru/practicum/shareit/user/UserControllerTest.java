@@ -97,6 +97,20 @@ class UserControllerTest {
         Mockito.verify(userService, Mockito.never()).addUser(userDto);
     }
 
+    @SneakyThrows
+    @Test
+    void updateUser() {
+        Integer userId = 1;
+        UserDto userDto = new UserDto(1, "test", "test2222@yandex.ru");
+
+        mockMvc.perform(patch("/users/{userId}", userId)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userDto)))
+                .andExpect(status().isOk());
+
+        Mockito.verify(userService, Mockito.times(1)).updateUser(userDto, userId);
+    }
+
 
     @SneakyThrows
     @Test

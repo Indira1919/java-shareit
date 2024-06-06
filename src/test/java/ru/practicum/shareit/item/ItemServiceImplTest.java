@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -23,6 +24,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +55,7 @@ class ItemServiceImplTest {
     private Comment comment;
     private CommentDto commentDto;
     private Booking booking;
+    private Booking booking2;
     private ItemRequest itemRequest;
 
     @BeforeEach
@@ -70,6 +73,10 @@ class ItemServiceImplTest {
         itemRequest = new ItemRequest(1, "description", new User(), null);
 
         booking = new Booking(1, null, null, item, user, Status.WAITING);
+
+        booking2 = new Booking(2, LocalDateTime.of(2020, 10, 20, 20, 20, 20),
+                LocalDateTime.of(2020, 10, 22, 20, 20, 20), item, user,
+                Status.APPROVED);
 
         comment = new Comment(1, "comment", item, user, null);
         commentDto = new CommentDto(1, "comment", user.getName(), null);
@@ -113,9 +120,16 @@ class ItemServiceImplTest {
 
         Mockito.when(itemRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(item));
         Mockito.when(commentRepository.findAllByItemId(Mockito.anyInt())).thenReturn(List.of(comment));
+        Mockito.when(bookingRepository.findFirstByItemIdAndStartLessThanEqualAndStatus(Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Optional.of(booking));
+
+        Mockito.when(bookingRepository.findFirstByItemIdAndStartAfterAndStatusEquals(Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Optional.of(booking));
 
         itemDtoComments = ItemMapper.toItemDtoComments(item);
         itemDtoComments.setComments(List.of(CommentMapper.toCommentDto(comment)));
+        itemDtoComments.setLastBooking(new ItemDtoComments.BookingDto(booking.getId(), booking.getBooker().getId()));
+        itemDtoComments.setNextBooking(new ItemDtoComments.BookingDto(booking.getId(), booking.getBooker().getId()));
 
         assertThat(itemService.getItemById(itemId, userId)).isEqualTo(itemDtoComments);
     }
@@ -165,7 +179,7 @@ class ItemServiceImplTest {
         Integer userId = 999;
 
         Mockito.when(userRepository.findById(userId))
-                        .thenThrow(new ObjectNotFoundException("Пользователь не найден"));
+                .thenThrow(new ObjectNotFoundException("Пользователь не найден"));
 
         assertThrows(ObjectNotFoundException.class, () -> itemService.addItem(itemDto, userId));
 
@@ -187,6 +201,51 @@ class ItemServiceImplTest {
         itemService.updateItem(itemDto1, itemId, userId);
 
         Mockito.verify(itemRepository, Mockito.times(1)).save(Mockito.any());
+    }
+
+    @Test
+    void updateItemObjectNotFoundException() {
+        Integer itemId = 1;
+        Integer userId = 3;
+
+        Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        ItemDto itemDto1 = new ItemDto(itemId, "testtt", "description", true, null);
+
+        assertThrows(ObjectNotFoundException.class, () -> itemService.updateItem(itemDto1, itemId, userId));
+    }
+
+    @Test
+    void addComment() {
+        Integer itemId = 1;
+        Integer userId = 1;
+
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        Mockito.when(commentRepository.save(Mockito.any())).thenReturn(comment);
+        List<Booking> bookingList = List.of(booking2);
+        Mockito.when(bookingRepository.findAllByBookerId(Mockito.anyInt(), Mockito.any())).thenReturn(bookingList);
+
+        CommentDto commentDto1 = itemService.addComment(itemId, userId, commentDto);
+
+        assertEquals(1, commentDto1.getId());
+        assertEquals("comment", commentDto1.getText());
+        assertEquals("test", commentDto1.getAuthorName());
+    }
+
+    @Test
+    void addCommentBadRequestException() {
+        Integer itemId = 1;
+        Integer userId = 1;
+
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        Mockito.when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        List<Booking> bookingList = List.of(booking);
+        Mockito.when(bookingRepository.findAllByBookerId(Mockito.anyInt(), Mockito.any()))
+                .thenReturn(bookingList);
+
+        assertThrows(BadRequestException.class, () -> itemService.addComment(itemId, userId, commentDto));
     }
 
     @Test

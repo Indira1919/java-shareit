@@ -15,6 +15,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoComments;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -80,6 +81,27 @@ class ItemControllerTest {
 
         Mockito.verify(itemService).getItemById(itemId, userId);
     }
+
+    @SneakyThrows
+    @Test
+    void getItems() {
+        Integer from = 0;
+        Integer size = 20;
+        String text = "";
+
+        String result = mockMvc.perform(get("/items/search")
+                        .param("text", text)
+                        .param("from", String.valueOf(from))
+                        .param("size", String.valueOf(size)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(List.of()), result);
+    }
+
 
     @SneakyThrows
     @Test

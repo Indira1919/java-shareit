@@ -151,7 +151,7 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatus(Status.REJECTED);
         }
 
-        booking = bookingRepository.save(booking);
+        bookingRepository.save(booking);
 
         return BookingMapper.toBookingDto(booking); // из booking в BookingDto
     }

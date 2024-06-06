@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -61,6 +62,20 @@ class ItemRequestServiceImplTest {
                 .thenThrow(new ObjectNotFoundException("Пользователь не найден"));
 
         assertThrows(ObjectNotFoundException.class, () -> itemRequestService.addItemRequest(itemRequestDto, userId));
+
+        Mockito.verify(itemRequestRepository, Mockito.never()).save(Mockito.any());
+    }
+
+    @Test
+    void addItemRequestBadRequestException() {
+        Integer userId = 1;
+
+        User user = new User(userId, "test", "test@yandex.ru");
+        ItemRequestDto itemRequestDto = new ItemRequestDto(1, "", null, null);
+
+        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(user));
+
+        assertThrows(BadRequestException.class, () -> itemRequestService.addItemRequest(itemRequestDto, userId));
 
         Mockito.verify(itemRequestRepository, Mockito.never()).save(Mockito.any());
     }
