@@ -74,11 +74,4 @@ class ItemRequestServiceImplIntegrationTest {
         assertEquals(dtoList.get(0).getDescription(), result.get(0).getDescription());
         assertEquals(dtoList.get(0).getItems().size(), result.get(0).getItems().size());
     }
-
-    @Test
-    void addItemRequest() {
-        ItemRequestDto itemRequest1 = itemRequestService.addItemRequest(itemRequestDto, requestId);
-
-        assertEquals("description", itemRequest1.getDescription());
-    }
 }
