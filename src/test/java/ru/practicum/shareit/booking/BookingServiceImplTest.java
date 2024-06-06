@@ -352,6 +352,20 @@ class BookingServiceImplTest {
     }
 
     @Test
+    void addBookingRequestDataEquals() {
+        item = new Item(1, "ppp", "description", true, user1,
+                null);
+        BookingDtoAdd dto = new BookingDtoAdd(user2.getId(), LocalDateTime.now(),
+                LocalDateTime.now(), item.getId());
+
+        Mockito.when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        Mockito.when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+
+        assertThrows(BadRequestException.class, ()
+                -> bookingService.addBookingRequest(dto, user2.getId()));
+    }
+
+    @Test
     void addBookingRequestOwner() {
         item = new Item(1, "ppp", "description", true, user1,
                 null);
