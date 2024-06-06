@@ -45,11 +45,11 @@ class ItemRequestServiceImplIntegrationTest {
         itemRequest = itemRequestRepository.save(itemRequest);
         requestId = itemRequest.getId();
 
-        item = new Item(1, "test222", "description", true, user, itemRequest);
+        item = new Item(1, "test222", "desc", true, user, itemRequest);
 
         itemRequestDto = new ItemRequestDto(requestId, "description", created, List.of());
 
-        itemDtoRequest = new ItemDtoRequest(1, "test222", "description", true, requestId);
+        itemDtoRequest = new ItemDtoRequest(1, "test222", "desc", true, requestId);
     }
 
     @Test

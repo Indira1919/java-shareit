@@ -355,8 +355,9 @@ class BookingServiceImplTest {
     void addBookingRequestDataEquals() {
         item = new Item(1, "ppp", "description", true, user1,
                 null);
-        BookingDtoAdd dto = new BookingDtoAdd(user2.getId(), LocalDateTime.now(),
-                LocalDateTime.now(), item.getId());
+        BookingDtoAdd dto = new BookingDtoAdd(user2.getId(),
+                LocalDateTime.of(2028,10,10,10,10,10),
+                LocalDateTime.of(2028,10,10,10,10,10), item.getId());
 
         Mockito.when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
         Mockito.when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
