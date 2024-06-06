@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,6 +56,24 @@ class UserControllerTest {
 
     @SneakyThrows
     @Test
+    void findAllError() {
+        Integer from = 0;
+        Integer size = 0;
+
+        Mockito.when(userService.findAll(Mockito.anyInt(), Mockito.anyInt()))
+                .thenThrow(new BadRequestException("Ошибка"));
+
+        mockMvc.perform(get("/users")
+                        .param("page", String.valueOf(from))
+                        .param("size", String.valueOf(size)))
+                .andDo(print())
+                .andExpect(status().is(400));
+
+        assertThrows(BadRequestException.class, () -> userService.findAll(from, size));
+    }
+
+    @SneakyThrows
+    @Test
     void getById() {
         Integer userId = 1;
         UserDto userDto = new UserDto(1, "test", "test@yandex.ru");
@@ -67,6 +88,21 @@ class UserControllerTest {
                 .getContentAsString();
 
         assertEquals(objectMapper.writeValueAsString(userDto), result);
+    }
+
+    @SneakyThrows
+    @Test
+    void getByIdError() {
+        Integer userId = 100;
+
+        Mockito.when(userService.getUserById(Mockito.anyInt()))
+                .thenThrow(new ObjectNotFoundException("ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН"));
+
+        mockMvc.perform(get("/users/{id}", userId))
+                .andDo(print())
+                .andExpect(status().is(404));
+
+        assertThrows(ObjectNotFoundException.class, () -> userService.getUserById(userId));
     }
 
     @SneakyThrows
