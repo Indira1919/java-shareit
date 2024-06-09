@@ -7,11 +7,11 @@ import ru.practicum.shareit.item.dto.ItemDtoComments;
 import java.util.List;
 
 public interface ItemService {
-    List<ItemDtoComments> getItemsOfUser(Integer userId);
+    List<ItemDtoComments> getItemsOfUser(Integer userId, Integer from, Integer page);
 
     ItemDtoComments getItemById(Integer itemId, Integer userId);
 
-    List<ItemDto> getItems(String description);
+    List<ItemDto> getItems(String description, Integer from, Integer page);
 
     ItemDto updateItem(ItemDto itemDto, Integer id, Integer userId);
 

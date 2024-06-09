@@ -3,12 +3,14 @@ package ru.practicum.shareit.item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoComments;
 import ru.practicum.shareit.valid.Add;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -22,8 +24,10 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDtoComments> getItemsOfUser(@RequestHeader("X-Sharer-User-Id") Integer userId) {
-        return itemService.getItemsOfUser(userId);
+    public List<ItemDtoComments> getItemsOfUser(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                                @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                @Positive @RequestParam(defaultValue = "30") Integer size) {
+        return itemService.getItemsOfUser(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
@@ -33,8 +37,10 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> getItems(@RequestParam(value = "text", required = false) String text) {
-        return itemService.getItems(text);
+    public List<ItemDto> getItems(@RequestParam(value = "text", required = false) String text,
+                                  @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                  @Positive @RequestParam(defaultValue = "30") Integer size) {
+        return itemService.getItems(text, from, size);
     }
 
     @PatchMapping("/{itemId}")

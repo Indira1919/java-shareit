@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoComments;
+import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.item.model.Item;
 
 public class ItemMapper {
@@ -12,7 +13,7 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .request(item.getRequest() != null ? item.getRequest() : null)
+                .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
     }
 
@@ -22,7 +23,6 @@ public class ItemMapper {
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
-                .request(itemDto.getRequest())
                 .build();
     }
 
@@ -34,7 +34,7 @@ public class ItemMapper {
                         itemDto.getDescription() : item.getDescription())
                 .available(itemDto.getAvailable() != null ? itemDto.getAvailable() : item.getAvailable())
                 .owner(item.getOwner())
-                .request(itemDto.getRequest())
+                .request(item.getRequest() != null ? item.getRequest() : null)
                 .build();
     }
 
@@ -44,6 +44,16 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .build();
+    }
+
+    public static ItemDtoRequest toItemDtoRequest(Item item) {
+        return ItemDtoRequest.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .requestId(item.getRequest().getId())
                 .build();
     }
 }

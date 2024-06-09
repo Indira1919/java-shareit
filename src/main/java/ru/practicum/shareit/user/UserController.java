@@ -7,8 +7,8 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.valid.Add;
 import ru.practicum.shareit.valid.Update;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -22,9 +22,9 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> findAll(@RequestParam(defaultValue = "0") @Min(0) Integer page,
-                                 @RequestParam(defaultValue = "30") @Min(10) @Max(100) Integer size) {
-        return userService.findAll(page, size);
+    public List<UserDto> findAll(@PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                 @Positive @RequestParam(defaultValue = "30") Integer size) {
+        return userService.findAll(from, size);
     }
 
     @GetMapping("/{id}")
