@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.valid.Add;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -19,10 +17,8 @@ public class BookItemRequestDto {
     private Integer itemId;
 
     @NotNull(groups = {Add.class})
- //   @FutureOrPresent(groups = {Add.class})
     private LocalDateTime start;
 
     @NotNull(groups = {Add.class})
- //   @Future(groups = {Add.class})
     private LocalDateTime end;
 }
