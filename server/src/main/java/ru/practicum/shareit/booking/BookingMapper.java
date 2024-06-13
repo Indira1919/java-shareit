@@ -4,11 +4,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoAdd;
 import ru.practicum.shareit.booking.model.Booking;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-
 public class BookingMapper {
 
     public static BookingDto toBookingDto(Booking booking) {
