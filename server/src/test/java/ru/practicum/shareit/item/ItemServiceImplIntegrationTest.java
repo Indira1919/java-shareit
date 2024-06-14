@@ -90,11 +90,11 @@ class ItemServiceImplIntegrationTest {
         Assertions.assertEquals(true, itemDto1.getAvailable());
     }
 
-//    @Test
-//    void deleteItem() {
-//        itemService.deleteItem(itemId);
-//        List<ItemDtoComments> itemDtoComments = itemService.getItemsOfUser(userId, 0, 10);
-//
-//        assertEquals(List.of(), itemDtoComments);
-//    }
+    @Test
+    void deleteItem() {
+        itemService.deleteItem(itemId);
+        List<ItemDtoComments> itemDtoComments = itemService.getItemsOfUser(userId, 0, 10);
+
+        Assertions.assertEquals(List.of(), itemDtoComments);
+    }
 }
